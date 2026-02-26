@@ -42,7 +42,7 @@ public class Conexion
     
     }
       public void altaAlumnos (Alumnos obj){
-         
+/*         
 String sentenciaSQL = "INSERT INTO Alumnos VALUES (" 
         + obj.getMatriculaAlumno() + " ,' " 
         + obj.getNombreAlumno() +"," 
@@ -57,13 +57,10 @@ System.out.println("Se ha afectado: " + filasAfectadas);
 System.out.println(sqle.getMessage());
 sqle.printStackTrace();
 }
-      }
-          
-          
-          
-          
-          
-          /*try
+     }
+      */
+         
+      try
     {
         System.out.println(obj);
         PreparedStatement ps=con.prepareStatement("INSERT INTO alumnos (MatriculaAlumnos, NombreAlumno, ID_Especialidad, FechaIngreso) VALUES (?,?,?,?)");
@@ -83,7 +80,7 @@ sqle.printStackTrace();
         sqle.printStackTrace();
     }
       }
-*/
+
     public static void main(String[] args) {
         Conexion conexion = new Conexion();
         
