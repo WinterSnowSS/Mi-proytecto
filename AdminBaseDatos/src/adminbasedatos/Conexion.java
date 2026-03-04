@@ -59,7 +59,7 @@ sqle.printStackTrace();
 }
      }
       */
-         
+      /*   este es el que sirve
       try
     {
         System.out.println(obj);
@@ -79,10 +79,47 @@ sqle.printStackTrace();
         System.out.println(sqle.getMessage());
         sqle.printStackTrace();
     }
+}
+      */
       }
+      
+      public void altaAlumnosDao(){
+          String mat=JOptionPane.showInputDialog("Ingrese la matricula del alumno");
+          String nom=JOptionPane.showInputDialog("Ingrese el nombre del alumno");
+          String espe=JOptionPane.showInputDialog("Ingrese la especialidad del alumno");
+          String fecha=JOptionPane.showInputDialog("Ingrese la fecha de ingreso");
+          
+          Alumnos obj=new Alumnos(mat,nom,espe,fecha);
+          
+     String sentenciaSQL = "INSERT INTO Alumnos (MatriculaAlumnos, NombreAlumno, ID_Especialidad, FechaIngreso) VALUES ('" 
+        + obj.getMatriculaAlumno() + "', '" 
+        + obj.getNombreAlumno() + "', '" 
+        + obj.getID_Especialidad() + "', '" 
+        + obj.getFechaIngreso() + "')";
+      
+      try{
+      
+          Statement stm=con.createStatement();
+          int filasAfectadas=stm.executeUpdate(sentenciaSQL);
+          System.out.println("Se ha agregado un nuevo registro");
+          System.out.println("Se ha afectado"+filasAfectadas);
+      }catch(SQLException sqle){
+          System.out.println(sqle.getMessage());
+      }
+      
+      }
+      // Este método permitirá que otras clases obtengan la conexión activa
+public Connection getConexion() {
+    return this.con;
+}
+     
 
     public static void main(String[] args) {
         Conexion conexion = new Conexion();
+        conexion.altaAlumnosDao();
+        conexion.desconectar();
+       
+        
         
     }  
     
