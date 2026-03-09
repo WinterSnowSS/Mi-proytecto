@@ -50,6 +50,29 @@ public class Conexion
         sqle.printStackTrace();
     }
       }
+    public void altaLibros (Libros obj) {
+    try
+    {
+        System.out.println(obj);
+        PreparedStatement ps=con.prepareStatement("INSERT INTO Libros (LibroID, Titulo, ISBN, Año_Publicacion, AutorID, EditorialID ,Estado) VALUES (?,?,?,?,?,?,?)");
+        ps.setInt(1,obj.getIDLibro());
+        ps.setString(2,obj.getTitulo());
+        ps.setString(3,obj.getISBN());
+        ps.setString(4,obj.getPublicacion());
+        ps.setInt(5,(obj.getAutorID()));
+        ps.setInt(6,obj.getEditorialID());
+        ps.setString(7,obj.getEstado());
+         
+        
+        int filasAfectadas=ps.executeUpdate();
+        System.out.println("Numero de filas afectadas"+filasAfectadas);
+        
+         }
+    catch (SQLException sqle){
+        System.out.println(sqle.getMessage());
+        sqle.printStackTrace();
+    }
+      }
     
       public static void main(String[] args) {
         Conexion conexion = new Conexion();
