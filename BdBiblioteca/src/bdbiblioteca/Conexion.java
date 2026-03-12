@@ -9,6 +9,9 @@ public class Conexion
     {
     conectar();
     }
+    public Connection getCon() {
+    return con;
+}
     public void conectar (){
     try{
         Class.forName("com.mysql.cj.jdbc.Driver");

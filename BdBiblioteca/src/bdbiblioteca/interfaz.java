@@ -5,9 +5,11 @@
 package bdbiblioteca;
 
 import com.mysql.cj.xdevapi.Statement;
+import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
+import java.sql.*;
 /**
  *
  * @author sykso
@@ -21,50 +23,54 @@ Libros a2=new Libros();
     public interfaz() {
         initComponents();
     }
-public void mostrarLibros(JTable tabla) {
-    // 1. Definimos el modelo de la tabla y las columnas
-    DefaultTableModel modelo = new DefaultTableModel();
-    modelo.addColumn("ID");
-    modelo.addColumn("Título");
-    modelo.addColumn("ISBN");
-    modelo.addColumn("Año");
-    modelo.addColumn("Autor");
-    modelo.addColumn("Editorial");
-    modelo.addColumn("Estado");
-
-    // 2. Consulta SQL (puedes usar JOIN para ver nombres en lugar de IDs)
-    String sql = "SELECT * FROM Libros"; 
+    /*
+    public void mostrarLibros(JTable Tabla) {
+    // 1. El modelo se llama 'modeloDatos' para no chocar con el nombre del componente
+    DefaultTableModel modeloDatos = new DefaultTableModel();
     
-    // Si quieres ver los NOMBRES del autor y editorial, usa esto:
-    // String sql = "SELECT l.LibroID, l.Titulo, l.ISBN, l.Año_Publicacion, a.Nombre, e.Nombre, l.Estado " +
-    //              "FROM Libros l " +
-    //              "JOIN autores a ON l.AutorID = a.AutorID " +
-    //              "JOIN editoriales e ON l.EditorialID = e.EditorialID";
+    // Agregamos las columnas tal cual aparecen en tu imagen de la interfaz
+    modeloDatos.addColumn("ID Libro");
+    modeloDatos.addColumn("Título del libro");
+    modeloDatos.addColumn("Autor");
+    modeloDatos.addColumn("Editorial");
+    modeloDatos.addColumn("Fecha Salida");
+    modeloDatos.addColumn("Fecha Entrega");
+    modeloDatos.addColumn("Estado");
 
-    String[] datos = new String[7]; // Array para guardar cada fila
+    // 2. Consulta con JOIN para traer nombres en lugar de IDs
+    String sql = "SELECT l.LibroID, l.Titulo, a.Nombre, e.Nombre, l.Año_Publicacion, 'N/A', l.Estado " +
+                 "FROM Libros l " +
+                 "JOIN autores a ON l.AutorID = a.AutorID " +
+                 "JOIN editoriales e ON l.EditorialID = e.EditorialID";
+
+    String[] registros = new String[7]; 
 
     try {
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery(sql);
 
         while (rs.next()) {
-            datos[0] = rs.getString(1); // LibroID
-            datos[1] = rs.getString(2); // Titulo
-            datos[2] = rs.getString(3); // ISBN
-            datos[3] = rs.getString(4); // Año_Publicacion
-            datos[4] = rs.getString(5); // AutorID (o nombre si usas JOIN)
-            datos[5] = rs.getString(6); // EditorialID (o nombre si usas JOIN)
-            datos[6] = rs.getString(7); // Estado
-            modelo.addRow(datos);
+            registros[0] = rs.getString(1); // LibroID
+            registros[1] = rs.getString(2); // Titulo
+            registros[2] = rs.getString(3); // Nombre Autor
+            registros[3] = rs.getString(4); // Nombre Editorial
+            registros[4] = rs.getString(5); // Año_Publicacion (como Fecha Salida)
+            registros[5] = rs.getString(6); // 'N/A' (Fecha Entrega)
+            registros[6] = rs.getString(7); // Estado
+            modeloDatos.addRow(registros);
         }
         
-        tabla.setModel(modelo); // Asignamos el modelo a la tabla de la interfaz
+        // 3. AQUÍ ESTÁ EL CAMBIO CLAVE:
+        // Aplicamos el modelo que acabamos de llenar a tu componente real
+        Tabla.setModel(modeloDatos);
         
     } catch (SQLException e) {
-        System.out.println("Error al llenar la tabla: " + e.getMessage());
+        System.out.println("Error al cargar los datos: " + e.getMessage());
     }
-}    
-
+   
+}
+   */
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -114,7 +120,7 @@ public void mostrarLibros(JTable tabla) {
         jButton4 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        TablaLibros = new javax.swing.JTable();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -449,6 +455,11 @@ public void mostrarLibros(JTable tabla) {
         jButton1.setText("Actualizar Selección");
         jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton1.setPreferredSize(new java.awt.Dimension(134, 35));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton2.setText("   Nuevo Libro");
@@ -461,9 +472,14 @@ public void mostrarLibros(JTable tabla) {
         });
 
         jButton3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton3.setText("Eliminar libro");
+        jButton3.setText("Eliminar");
         jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton3.setPreferredSize(new java.awt.Dimension(105, 35));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton4.setText("Limpiar campos");
@@ -501,39 +517,39 @@ public void mostrarLibros(JTable tabla) {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jTable2.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        TablaLibros.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        TablaLibros.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        TablaLibros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Préstamo", "ID Libro", "Título del libro", "Autor", "Editorial", "Fecha Salida", "Fecha Entrega", "Estado"
+                "ID Libro", "Título del libro", "Autor", "Editorial", "Fecha Salida", "Fecha Entrega", "Estado"
             }
         ));
-        jTable2.setRowMargin(1);
-        jTable2.setShowHorizontalLines(true);
-        jTable2.setShowVerticalLines(true);
-        jScrollPane2.setViewportView(jTable2);
+        TablaLibros.setRowMargin(1);
+        TablaLibros.setShowHorizontalLines(true);
+        TablaLibros.setShowVerticalLines(true);
+        jScrollPane2.setViewportView(TablaLibros);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -626,7 +642,15 @@ public void mostrarLibros(JTable tabla) {
     }//GEN-LAST:event_txtEditorialIDActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+txtIDLibro.setText("");
+txtTitulo.setText("");
+txtISBN.setText("");
+txtPublicacion.setText("");
+txtEditorialID.setText("");
+txtAutorID.setText("");
+cbEstado.setSelectedIndex(0);
+
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -638,7 +662,6 @@ a2.setEditorialID(Integer.parseInt(txtEditorialID.getText()));
 a2.setAutorID(Integer.parseInt(txtAutorID.getText()));
 a2.setEstado(cbEstado.getSelectedItem().toString());
 a1.altaLibros(a2);
-a1.desconectar();
 
 
 
@@ -648,6 +671,42 @@ a1.desconectar();
     private void cbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEstadoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbEstadoActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+// TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+String idTexto= txtIDLibro.getText();
+String sql = "SELECT LibroID,Titulo,ISBN,Año_publicacion,AutorID,EditorialID,Estado FROM libros WHERE LibroID = ?";
+
+try {
+    // 3. Preparar la conexión y la sentencia
+    Conexion con = new Conexion(); // Tu método que conecta a la BD
+    PreparedStatement ps = con.getCon().prepareStatement(sql);
+    ps.setString(1, idTexto);
+    
+    ResultSet rs=ps.executeQuery();
+    
+
+    // 4. Verificar si se encontró el libro
+    if (rs.next()) {
+        // Si hay resultados, llenamos los campos de la interfaz
+        txtTitulo.setText(rs.getString("titulo"));
+        txtAutorID.setText(rs.getString("autorID"));
+        txtISBN.setText(rs.getString("ISBN"));
+        txtPublicacion.setText(rs.getString("Año_Publicacion"));
+        txtEditorialID.setText(rs.getString("EditorialID"));
+    } else {
+        JOptionPane.showMessageDialog(null, "Libro no encontrado");
+    }
+
+} catch (SQLException e) {
+    System.err.println("Error al consultar: " + e.getMessage());
+}
+// TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -685,6 +744,7 @@ a1.desconectar();
     } 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TablaLibros;
     private javax.swing.JComboBox<String> cbEstado;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -715,7 +775,6 @@ a1.desconectar();
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
