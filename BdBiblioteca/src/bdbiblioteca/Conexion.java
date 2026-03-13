@@ -76,6 +76,21 @@ public class Conexion
         sqle.printStackTrace();
     }
       }
+    public boolean eliminar(String tabla, String nombreColumnaID, int idValor) {
+    String sql = "DELETE FROM " + tabla + " WHERE " + nombreColumnaID + " = ?";
+    
+    try {
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, idValor);
+        
+        int filasAfectadas = ps.executeUpdate();
+        return filasAfectadas > 0;
+        
+    } catch (SQLException sqle) {
+        JOptionPane.showMessageDialog(null, "No se puede eliminar: El registro está siendo usado en otra tabla.\n" + sqle.getMessage(), "Error de Restricción", JOptionPane.ERROR_MESSAGE);
+        return false;
+    }
+}
     
       public static void main(String[] args) {
         Conexion conexion = new Conexion();
